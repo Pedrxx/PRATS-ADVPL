@@ -1,26 +1,47 @@
-#include 'protheus.ch'
-#include 'parmtype.ch'
-#include 'FwMvcDef.ch'
-#include 'totvs.ch'
-#include 'topconn.ch'
+#INCLUDE "RPTDEF.CH"
+#INCLUDE "FWPrintSetup.ch"
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "TBICONN.CH"                                        
+#INCLUDE "RWMAKE.CH"
+#INCLUDE "TOTVS.CH"
+#include "TOPCONN.CH"
+#INCLUDE "TOTVS.CH"
+#INCLUDE "FWMVCDEF.CH"
 
-/*/{Protheus.doc} User Function PRTRES01
-    RETORNO DE PEDIDOS ELIMINADOS POR RESIDUOS
-    @type  Function
-    @author Pedro Augusto Costa
-    @since 30/01/2023
-    /*/
-user function PRTRES01()
+/* 
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³ PRTCOM12  º Autor ³Pedro Augusto      º Data ³01/02/2023   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDescri‡„o ³ Valida Contrato de Parceria                                º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Espec¡fico para Grupo Pratinha                             º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºParametros³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºAlteracao ³                                                            º±±
+±±º          ³                                                            º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+User Function PRTCOM12()
 
     Local aArea := GetArea()
     Local oBrowse := FWMBrowse():New()
+    Local cCamFil :=  "C7_RESIDUO"
+    Local cVarFil1 := "S"
+    Local cVarFil2 := cVarFil1
 
     oBrowse:SetAlias("SC7")
     oBrowse:SetDescription("Retorna Pedido")
 
     // legendas
 	oBrowse:AddLegend("SC7->C7_RESIDUO == 'S'","RED", "Eliminado") //verde
-	oBrowse:AddLegend("SC7->C7_RESIDUO == ' '","GREEN", "Disponivel") //vermelho
+	//oBrowse:AddLegend("SC7->C7_RESIDUO == ' '","GREEN", "Disponivel") //vermelho
+
+    oBrowse:SetFilter(cCamFil, cVarFil1, cVarFil2)
 
     oBrowse:Activate() // Ativando o Browse
     RestArea(aArea)
@@ -53,7 +74,7 @@ Return oModel
 static function ViewDef()
 
     Local oView := Nil
-    Local oModel := FWLoadModel("PRTRES01")
+    Local oModel := FWLoadModel("PRTCOM12")
     Local oStSC7:= FWFormStruct(2,"SC7")
 
     oView := FWFormView():New()
@@ -80,21 +101,22 @@ user function RETPEDI()
         If SC7->(dbSeek(xFilial("SC7") + _cNumPed))
             While !SC7->(Eof()) .And. SC7->(C7_FILIAL+C7_NUM) == xFilial("SC7") + _cNumPed
                 If SC7->C7_RESIDUO = "S" .AND. SC7->C7_ENCER = "E"    
+                    If zExecQry(_cQuery) == .T.
                         RecLock("SC7", .F.)
                             SC7->C7_RESIDUO = " "
                             SC7->C7_ENCER = " "
 
-                        zExecQry(_cQuery)
-
                         SC7->(MsUnlock())
 
-                    MsgInfo("Item eliminado", "Retorna Pedido")
-                    SC7->(dbSkip())
+                        SC7->(dbSkip())
+                    Else
+                        SC7->(dbSkip())
+                    EndIf
                 Else
-                    MsgInfo("Item não eliminado", "Retorna Pedido")
                     SC7->(dbSkip())
                 EndIf
             Enddo
+            FWAlertSuccess("Registro retornado com sucesso!", "Sucesso!")
         EndIf
     Endif
 Return 
