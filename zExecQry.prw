@@ -32,6 +32,7 @@ User Function zExecQry(cQuery, lFinal)
     //Se deu tudo certo, altera a flag de retorno
     Else
         lDeuCerto := .T.
+        FWAlertSuccess("Registro retornado com sucesso!", "Sucesso!")
     EndIf
  
     FWRestArea(aArea)    
