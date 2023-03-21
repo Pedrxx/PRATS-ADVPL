@@ -2,6 +2,20 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"type": "java",
+			"name": "Launch teste",
+			"request": "launch",
+			"mainClass": "teste",
+			"projectName": "PRATS-ADVPL_aec602c"
+		},
+		{
+			"type": "java",
+			"name": "Launch ArrayAleatorio",
+			"request": "launch",
+			"mainClass": "ArrayAleatorio",
+			"projectName": "PRATS-ADVPL_aec602c"
+		},
+		{
 			"type": "totvs_language_debug",
 			"request": "launch",
 			"name": "TOTVS Language Debug",
