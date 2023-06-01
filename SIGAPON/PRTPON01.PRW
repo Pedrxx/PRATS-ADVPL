@@ -9,7 +9,7 @@
 #INCLUDE "FWMVCDEF.CH"
 
 
-User Function PRTPON98()
+User Function PRTPON01()
 
     // RFE_FILIAL, RFE_DATA, RFE_MATORG, RFE_RELSP0 
     // RFB_DTHRLI
@@ -31,7 +31,7 @@ User Function PRTPON98()
 
 
     aAdd(aPergs, {1, "Filial De", cFilialDe,   "",           ".T.",     "",    ".T.", 80,  .F.})
-    aAdd(aPergs, {1, "Filial De", cFilialAte,  "",           ".T.",     "",    ".T.", 80,  .F.})
+    aAdd(aPergs, {1, "Filial Ate", cFilialAte,  "",           ".T.",     "",    ".T.", 80,  .F.})
     aAdd(aPergs, {1, "Matrícula De", cMatDe,   "",           ".T.",     "",    ".T.", 80,  .F.})
     aAdd(aPergs, {1, "Matrícula Ate", cMatAte, "",           ".T.",     "",    ".T.", 80,  .F.})
     aAdd(aPergs, {1, "Data De",  cDateDe,      "",           ".T.",     "",    ".T.", 80,  .F.})

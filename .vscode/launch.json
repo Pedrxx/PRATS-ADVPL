@@ -6,14 +6,16 @@
 			"name": "Launch teste",
 			"request": "launch",
 			"mainClass": "teste",
-			"projectName": "PRATS-ADVPL_aec602c"
+			"projectName": "PRATS-ADVPL_aec602c",
+			"smartclientBin": "C:\\BASE PRATS\\smart client homologação\\smartclient_x64\\smartclient.exe"
 		},
 		{
 			"type": "java",
 			"name": "Launch ArrayAleatorio",
 			"request": "launch",
 			"mainClass": "ArrayAleatorio",
-			"projectName": "PRATS-ADVPL_aec602c"
+			"projectName": "PRATS-ADVPL_aec602c",
+			"smartclientBin": "C:\\BASE PRATS\\smart client homologação\\smartclient_x64\\smartclient.exe"
 		},
 		{
 			"type": "totvs_language_debug",
@@ -21,9 +23,30 @@
 			"name": "TOTVS Language Debug",
 			"program": "${command:AskForProgramName}",
 			"cwb": "${workspaceFolder}",
-			"smartclientBin": "../totvs/bin/smartclient/smartclient.exe",
+			"smartclientBin": "C:\\BASE PRATS\\smart client homologação\\smartclient_x64\\smartclient.exe",
 			"isMultiSession": true,
 			"enableTableSync": true
 		}
-	]
+	],
+	"lastPrograms": [
+		{
+			"label": "homologacao2"
+		},
+		{
+			"label": "ztestsoap"
+		},
+		{
+			"label": "U_ZTESTSOAP"
+		},
+		{
+			"label": "U_zTestApi"
+		},
+		{
+			"label": "U_TMATA241"
+		},
+		{
+			"label": "U_XMATA240"
+		}
+	],
+	"lastProgramExecuted": "U_XMATA240"
 }
