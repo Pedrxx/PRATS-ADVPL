@@ -10,13 +10,13 @@ User Function zTestSOAP()
     local cHeadRet as char
     local i
     cHeadRet    := ""
-    cURL        := "http://ctasmart.com.br:8080/SvWebSincronizaAbastecimentos?token=Y9vY5Sv51d&data_inicio=01/01/2012&data_fim=01/01/2012"
+    // cURL        := "http://ctasmart.com.br:8080/SvWebSincronizaAbastecimentos?token=we1jyKpEle&data_inicio=22/05/2023&data_fim=22/05/2023"
+    cURL      := "http://ctasmart.com.br:8080/SvWebSincronizaAbastecimentos?token=Y9vY5Sv51d&data_inicio=01/01/2012&data_fim=09/04/2012"
     nTimeOut    := 15
     aChildren := {} 
     cNumDoc := GetSxeNum("SD3","D3_DOC")
 
     cGetRet := HTTPSGet( cURL, "", "", "", "", 15,/*aHeadOut*/,@cHeadRet)
-    // Alert(cGetRet)
 
     If !Empty( cGetRet )
         oXML := TXMLManager():New()
@@ -27,10 +27,15 @@ User Function zTestSOAP()
 
             For i := 1 to cCountArray
                 aChildren := oXML:XPathGetChildArray( "/CTAPLUS/ABASTECIMENTOS/ABASTECIMENTO["+CVALTOCHAR(i)+"]" )
+                aChildrenVeic := oXML:XPathGetChildArray( "/CTAPLUS/ABASTECIMENTOS/ABASTECIMENTO["+CVALTOCHAR(i)+"]/VEICULO" )
+
                 VARINFO("aChildren", aChildren)
+                VARINFO("aChildrenVeic", aChildrenVeic)
+
                 Alert(aChildren[1][3])
-                Alert(PRTMOVIN("101010","501",cNumDoc,STRZERO(RANDOMIZE( 1, 99999 ),5),/*CToD(aChildren[3][3])*/dDataBase,,VAL(StrTran(aChildren[7][3],",",".")),aChildren[19][3],"05",,,"130110",aChildren[1][3]))
-                Alert("Inseri "+ CVALTOCHAR( i ))
+                Alert(PRTMOVIN("101010","501",cNumDoc,STRZERO(RANDOMIZE( 1, 99999 ),5),CToD(aChildren[3][3]),,VAL(StrTran(aChildren[7][3],",",".")),aChildren[19][3],"05",,,aChildren[1][3],aChildrenVeic[2][3]))
+                
+                // Alert("Inseri "+ CVALTOCHAR( i ))
             Next
         Endif     
     Endif
@@ -38,25 +43,7 @@ User Function zTestSOAP()
 
 Return 
 
-
-/*
-D3_FILIAL = 101010
-D3_TM = 501
-D3_COD = 1041.123.000001 OU 1041.123.000002 -> aChildren[19][3]
-D3_UM = LT
-D3_QUANT = aChildren[7][3]
-D3_CF = RE0 
-D3_CONTA = 1108001007          
-D3_LOCAL = 01 
-D3_DOC = !AUTO!
-D3_EMISSAO -> aChildren[3][3]
-D3_CC = !PLACA!
-D3_NUMSEQ = !AUTO!
-D3_OBSERVA = MOTORISTA + PLACA + HORA_INICIO + HORA_FIM
-*/
-
-
-Static Function PRTMOVIN(_cFilial, cCodTM, _cDocumento, _cSeqSD3, _dData, _cOP, _nQtdO, _cCodProF, _cLocalO, _cEndO, _cLoteO, _cCC, _cIdAbst)
+Static Function PRTMOVIN(_cFilial, cCodTM, _cDocumento, _cSeqSD3, _dData, _cOP, _nQtdO, _cCodProF, _cLocalO, _cEndO, _cLoteO, _cIdAbst, _cPlaca)
 Local _aArea		:= GetArea()
 
 Local _aCabSD3 		:= {}
@@ -126,18 +113,34 @@ Begin Transaction
     If _nQtdO == 0
         DisarmTransaction()
         RestArea(_aArea)
-        Return("PRTMOVIN_ERR_004-Qtd. Original Zerada.[" + 'Movimentação Interna') + ']'
+        Return("PRTMOVIN_ERR_001-Qtd. Original Zerada.[" + 'Movimentação Interna') + ']'
     Endif
 
-    // SD3->(dbSetOrder(19))
-    // If SD3->(dbSeek(xFilial('SD3') + _cIdAbst))
-    //     DisarmTransaction()
-    //     RestArea(_aArea)
-    //     Return("PRTMOVIN_ERR_002-Abastecimento ja incluso[" + 'Movimentação Interna') + ']'
+    SD3->(dbSetOrder(19))
+    If SD3->(dbSeek(xFilial('SD3') + _cIdAbst))
+        DisarmTransaction()
+        RestArea(_aArea)
+        Return("PRTMOVIN_ERR_002-Abastecimento ja incluso[" + 'Movimentação Interna') + ']'
     //     Alert("ID Abastecimento: " + SD3->D3_XIDABST)
     // Else
-    //     Alert("Não achei | "+ SD3->D3_XIDABST)
-    // EndIf
+    //     Alert("Não achei ")
+    EndIf
+
+    DA3->(DbSetOrder(3))
+    If DA3->(DbSeek(xFilial("DA3") + _cPlaca))
+        CTT->(DbSetOrder(1))
+        If !CTT->(DbSeek(xFilial("CTT") + DA3->DA3_XCC))
+            DisarmTransaction()
+            RestArea(_aArea)
+            Return("PRTMOVIN_ERR_003- Centro de Custos Não Encontrado.[" + 'Movimentação Interna') + ']'
+        Else
+            _cCC := CTT->CTT_CUSTO
+        EndIf
+    Else
+        DisarmTransaction()
+        RestArea(_aArea)
+        Return("PRTMOVIN_ERR_004- Veiculo Não Encontrado.[" + 'Movimentação Interna') + ']'
+    EndIf
 
     SA5->(dbSetOrder(14))
     If SA5->(dbSeek(xFilial('SA5') + _cCodForn + _cCodLoja + _cCodProF))
@@ -146,14 +149,14 @@ Begin Transaction
     Else
         DisarmTransaction()
         RestArea(_aArea)
-        Return("PRTMOVIN_ERR_003-Produto x Forencedor Não Encontrado.[" + 'Movimentação Interna') + ']'
+        Return("PRTMOVIN_ERR_005-Produto x Forencedor Não Encontrado.[" + 'Movimentação Interna') + ']'
     EndIf
 
     SB1->(dbSetOrder(1))
     If !SB1->(dbSeek(xFilial("SB1") + _cCodProF))
         DisarmTransaction()
         RestArea(_aArea)
-        Return("PRTMOVIN_ERR_005-Produto de Origem Não Encontrado.[" + 'Movimentação Interna') + ']'
+        Return("PRTMOVIN_ERR_006-Produto de Origem Não Encontrado.[" + 'Movimentação Interna') + ']'
     Else
         If SB1->B1_LOCALIZ == 'S'
             _lLocalizO:=.T.
@@ -185,7 +188,7 @@ Begin Transaction
         If !SBF->(dbSeek( xFilial("SBF") + _cLocalO + Padr(_cEndO,TamSx3("BF_LOCALIZ")[1]) + _cCodProF))
             DisarmTransaction()
             RestArea(_aArea)
-            Return("PRTMOVIN_ERR_008-Sld. de End. Nao Encontrado.[" + 'Movimentação Interna') + ']'
+            Return("PRTMOVIN_ERR_007-Sld. de End. Nao Encontrado.[" + 'Movimentação Interna') + ']'
         EndIf
     Endif
 
@@ -244,9 +247,60 @@ Begin Transaction
     SetFunName(cFunBkp)
 
     If lMsErroAuto 
-        mostraerro()
+        PostSSL(CriaXMLRet(_cIdAbst,.F.))
+        mostraerro(_cUrl)
+    else
+        PostSSL(CriaXMLRet(_cIdAbst,.T.))
     Endif
 
 End Transaction
 RestArea(_aArea)
 Return(_cRet)
+
+Static Function CriaXMLRet(_cID,_lSync) 
+
+    local _cXML
+
+    If _lSync := .T.
+        _cXML := "%3CABASTECIMENTOS%3E%20%0A%3CABASTECIMENTO%3E%0A%3CID%3E"+_cID
+        _cXML += "%3C%2FID%3E%0A%3CSTATUS%3ESucesso%3C%2FSTATUS%3E%0A
+        _cXML += "%3CMOTIVO_ERRO%3EInserido%20com%20sucesso%3C%2FMOTIVO_ERRO%3E
+        _cXML += "%0A%3C%2FABASTECIMENTO%3E%0A%3C%2FABASTECIMENTOS%3E"
+    Else
+        _cXML := "%3CABASTECIMENTOS%3E%20%0A%3CABASTECIMENTO%3E%0A%3CID%3E"+_cID
+        _cXML += "%3C%2FID%3E%0A%3CSTATUS%3EErro%3C%2FSTATUS%3E%0A
+        _cXML += "%3CMOTIVO_ERRO%3ENao%20inserido%3C%2FMOTIVO_ERRO%3E%0A%3C%2FABASTECIMENTO%3E%0A%"
+        _cXML += "3C%2FABASTECIMENTOS%3E
+    EndIf
+
+
+Return _cXML 
+
+
+static function PostSSL(_cXML)
+  Local nTimeOut := 120
+  Local aHeadOut := {}
+  Local cHeadRet := ""
+  Local cPostRet := ""  
+//   Local _cPostParams 
+  Local _cURL    
+   
+  // Acrescenta o UserAgent na requisição ...
+  // http://tools.ietf.org/html/rfc3261#page-179
+
+  _cURL  := "https://ctasmart.com.br:8443/SvWebInformaSincronismo?token=Y9vY5Sv51d&xml=" + _cXML + "&formato=xml"
+
+//   _cPostParams := "&formato=xml"
+
+  AAdd( aHeadOut, 'User-Agent: Mozilla/4.0 (compatible; Protheus ' + GetBuild() + ')' )
+  cPostRet := HTTPSPost( _cUrl, "","","","","", nTimeOut, aHeadOut, @cHeadRet )
+   
+  if Empty( cPostRet )
+    Alert( "Fail HTTPSPost" )
+  else
+    Alert( "OK HTTPSPost" )
+    varinfo( "WebPage", cPostRet )
+  endif
+   
+  varinfo( "Header", cHeadRet )
+return
