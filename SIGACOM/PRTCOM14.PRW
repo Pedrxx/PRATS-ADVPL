@@ -8,7 +8,7 @@
 #INCLUDE "TOTVS.CH"
 #INCLUDE "FWMVCDEF.CH"
 
-User Function PRTCOM13()
+User Function PRTCOM14()
 
     Local lRet
     Local aArea := GetArea()
@@ -22,7 +22,7 @@ User Function PRTCOM13()
         RestArea(aArea)
         lRet := .T.
     Else
-        FWAlertError("Usuário não hábilitado para acessar esta rotina","PRTCOM13")
+        FWAlertError("Usuário não hábilitado para acessar esta rotina","PRTCOM14")
         lRet := .F.    
     EndIf  
 
@@ -54,7 +54,7 @@ Return oModel
 static function ViewDef()
 
     Local oView := Nil
-    Local oModel := FWLoadModel("PRTCOM13")
+    Local oModel := FWLoadModel("PRTCOM14")
     Local oStSC7:= FWFormStruct(2,"SC7")
 
     oView := FWFormView():New()

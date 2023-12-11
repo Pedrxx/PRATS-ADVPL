@@ -11,10 +11,7 @@
 
 User Function PRTPON01()
 
-    // RFE_FILIAL, RFE_DATA, RFE_MATORG, RFE_RELSP0 
-    // RFB_DTHRLI
-
-    Local cFilialDe := Space(6)
+    Local cFilialDe := Space(6) 
     Local cFilialAte := Space(6)
 
     Local cMatDe := Space(6)
@@ -26,37 +23,57 @@ User Function PRTPON01()
     Local cDateDe := Date()
     Local cDateAte := Date()
 
+    local nVinc := 1 // MV_PAR09
+
 
     Local aPergs := {}
 
 
     aAdd(aPergs, {1, "Filial De", cFilialDe,   "",           ".T.",     "",    ".T.", 80,  .F.})
-    aAdd(aPergs, {1, "Filial Ate", cFilialAte,  "",           ".T.",     "",    ".T.", 80,  .F.})
+    aAdd(aPergs, {1, "Filial Ate", cFilialAte,  "",           ".T.",    "",    ".T.", 80,  .F.})
     aAdd(aPergs, {1, "Matrícula De", cMatDe,   "",           ".T.",     "",    ".T.", 80,  .F.})
     aAdd(aPergs, {1, "Matrícula Ate", cMatAte, "",           ".T.",     "",    ".T.", 80,  .F.})
-    aAdd(aPergs, {1, "Data De",  cDateDe,      "",           ".T.",     "",    ".T.", 80,  .F.})
-    aAdd(aPergs, {1, "Data Até", cDateAte,     "",           ".T.",     "",    ".T.", 80,  .F.})
+    aAdd(aPergs, {1, "Data De",  cDateDe,      "",           ".T.",     "",    ".T.", 80,  .T.})
+    aAdd(aPergs, {1, "Data Até", cDateAte,     "",           ".T.",     "",    ".T.", 80,  .T.})
     aAdd(aPergs, {1, "Relógio De", cRelDe,     "",           ".T.",     "",    ".T.", 80,  .F.})
     aAdd(aPergs, {1, "Relógio Ate", cRelAte,    "",          ".T.",     "",    ".T.", 80,  .F.})
+    aAdd(aPergs, {2, "Exclui",      nVinc, {"1 = Leituras (RFB)", "2 = Apontamentos (RFE)","3 = Ambas"},                                       090, ".T.", .F.})
 
-    Local _cQueryRFE
 
-    Local _cQueryRFB := "UPDATE RFB100 SET D_E_L_E_T_ = ' ' WHERE "
-    Local _cQueryRFB += "RFB_DTHRLI BETWEEN '"+ DATABASE + "0000' AND '" + DATABASE + "2359'"
+    Local _cQueryRFE := ''
+    Local _cQueryRFB := ''
 
-    If ParamBox(aPergs, "Parametros")
+
+    If ParamBox(aPergs, "Parametros",,,,,,,,,.T.,.T.)
+        _cQueryRFB += "UPDATE RFB100 SET D_E_L_E_T_ = '*' WHERE "
+        _cQueryRFB += "RFB_DTHRLI BETWEEN '"+ SUBSTR(DTOS(dDATABASE),3,8) + "0000' AND '" + SUBSTR(DTOS(dDATABASE),3,8) + "2359'"
+        _cQueryRFB += "AND RFB_RELOGI BETWEEN '"+MV_PAR07+"' AND '"+MV_PAR08+"'"
+        // Alert('"' + SUBSTR(DTOS(dDATABASE),3,8) + "0000' AND '" + SUBSTR(DTOS(dDATABASE),3,8) + "2359'")
+        
         _cQueryRFE := "UPDATE RFE100 SET D_E_L_E_T_ = '*' WHERE "
         _cQueryRFE +="RFE_FILIAL BETWEEN '"+MV_PAR01+"' AND '"+MV_PAR02+"' "
         _cQueryRFE +="AND RFE_MATORG BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"' "
         _cQueryRFE +="AND RFE_DATA BETWEEN '"+DTOS(MV_PAR05)+"' AND '"+DTOS(MV_PAR06)+"' " 
         _cQueryRFE +="AND RFE_RELSP0 BETWEEN '"+MV_PAR07+"' AND '"+MV_PAR08+"'"
 
-        Alert(_cQueryRFE)
+        // Alert(_cQueryRFE)
         
-        If MsgYesNo( "Deseja excluir as tabelas RFB e RFE do sistema ?", "Exclui registros" )
-            If zExecQry(_cQueryRFE) == .T.
-                zExecQry(_cQueryRFB)
-                FWAlertSuccess("Registro excluidos com sucesso!", "Sucesso!")
+        If MsgYesNo( "Deseja excluir os registros do sistema ?", "Exclui registros" )
+            If MV_PAR09 == 1
+                If zExecQry(_cQueryRFB) == .T.
+                    FWAlertSuccess("Registros RFB excluidos com sucesso!", "Sucesso!")
+                EndIf
+            EndIf
+            If MV_PAR09 == 2
+                If zExecQry(_cQueryRFE) == .T.
+                    FWAlertSuccess("Registros RFE excluidos com sucesso!", "Sucesso!")
+                EndIf
+            EndIf     
+            If MV_PAR09 == 3                
+                If zExecQry(_cQueryRFE) == .T.
+                    zExecQry(_cQueryRFB)
+                    FWAlertSuccess("Ambos registro excluidos com sucesso!", "Sucesso!")
+                EndIf
             EndIf
         EndIF
     EndIf

@@ -9,12 +9,13 @@
 #INCLUDE "FWMVCDEF.CH"
 
 
-User Function PRTCDF01()
+User Function PRTFAT13()
 
     Local aArea := GetArea()
     Local oBrowse := FWMBrowse():New()
 
     oBrowse:SetAlias('SZX')
+    oBrowse:SetDescription("Cadastro de Familia")
     oBrowse:Activate()
     RestArea(aArea)
     
@@ -26,9 +27,9 @@ static function MenuDef()
 
     // Menu
      
-    ADD OPTION aRotina TITLE 'Incluir'       ACTION 'VIEWDEF.PRTCTT01' OPERATION 3 ACCESS 0
-    ADD OPTION aRotina TITLE 'Alterar'       ACTION 'VIEWDEF.PRTCTT01' OPERATION 4 ACCESS 0
-    ADD OPTION aRotina TITLE 'Visualizar'    ACTION 'VIEWDEF.PRTCTT01' OPERATION 2 ACCESS 0 
+    ADD OPTION aRotina TITLE 'Incluir'       ACTION 'VIEWDEF.PRTFAT13' OPERATION 3 ACCESS 0
+    ADD OPTION aRotina TITLE 'Alterar'       ACTION 'VIEWDEF.PRTFAT13' OPERATION 4 ACCESS 0
+    ADD OPTION aRotina TITLE 'Visualizar'    ACTION 'VIEWDEF.PRTFAT13' OPERATION 2 ACCESS 0 
 
 
 Return aRotina
@@ -48,7 +49,7 @@ Return oModel
 static function ViewDef()
 
     Local oView := Nil
-    Local oModel := FWLoadModel("PRTCDF01")
+    Local oModel := FWLoadModel("PRTFAT13")
     Local oStSZX:= FWFormStruct(2,"SZX")
 
     oView := FWFormView():New()

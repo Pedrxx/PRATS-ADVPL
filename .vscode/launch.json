@@ -25,7 +25,17 @@
 			"cwb": "${workspaceFolder}",
 			"smartclientBin": "C:\\BASE PRATS\\smart client homologação\\smartclient_x64\\smartclient.exe",
 			"isMultiSession": true,
-			"enableTableSync": true
+			"enableTableSync": true,
+			"programArguments": [],
+			"enableMultiThread": true,
+			"enableProfile": false,
+			"isAccessibilityMode": false,
+			"doNotShowSplash": false,
+			"openglMode": false,
+			"dpiMode": false,
+			"olddpiMode": false,
+			"language": "1",
+			"ignoreFiles": false
 		}
 	],
 	"lastPrograms": [
@@ -46,7 +56,13 @@
 		},
 		{
 			"label": "U_XMATA240"
+		},
+		{
+			"label": "SIGAADV"
+		},
+		{
+			"label": "U_PRWSEST1"
 		}
 	],
-	"lastProgramExecuted": "U_XMATA240"
+	"lastProgramExecuted": "SIGAADV"
 }
