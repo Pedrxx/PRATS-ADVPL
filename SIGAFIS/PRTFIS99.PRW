@@ -36,16 +36,23 @@ User Function PRTFIS99()
     Local cFirstDoc := 0
     Local cBodyEmail := ''
 
-    Local cQuery1 := "UPDATE SF1100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE F1_FILIAL BETWEEN "+MV_PAR01+" AND "+MV_PAR02+" AND F1_DOC BETWEEN "+MV_PAR03+" AND "+MV_PAR04+" AND F1_SERIE BETWEEN "+MV_PAR05+" AND "+MV_PAR06+" AND F1_EMISSAO BETWEEN "+DToS(MV_PAR07)+" AND "+DToS(MV_PAR08)+""
-    Local cQuery2 := "UPDATE SD1100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE F1_FILIAL BETWEEN "+MV_PAR01+" AND "+MV_PAR02+" AND F1_DOC BETWEEN "+MV_PAR03+" AND "+MV_PAR04+" AND F1_SERIE BETWEEN "+MV_PAR05+" AND "+MV_PAR06+" AND F1_EMISSAO BETWEEN "+DToS(MV_PAR07)+" AND "+DToS(MV_PAR08)+""
-    Local cQuery3 := "UPDATE SFT100 SET FT_DTCANC = '', FT_OBSERV = '' WHERE FT_FILIAL BETWEEN "+MV_PAR01+" AND "+MV_PAR02+" AND FT_NFISCAL BETWEEN "+MV_PAR03+" AND "+MV_PAR04+" AND FT_SERIE BETWEEN "+MV_PAR05+" AND "+MV_PAR06+" AND FT_EMISSAO BETWEEN "+DToS(MV_PAR07)+" AND "+DToS(MV_PAR08)+""
-    Local cQuery4 := "UPDATE SF3100 SET F3_DTCANC = '', F3_OBSERV = '', F3_CODRSEF = '' WHERE F3_FILIAL BETWEEN "+MV_PAR01+" AND "+MV_PAR02+" AND F3_NFISCAL BETWEEN "+MV_PAR03+" AND "+MV_PAR04+" AND F3_SERIE BETWEEN "+MV_PAR05+" AND "+MV_PAR06+" AND F3_EMISSAO BETWEEN "+DToS(MV_PAR07)+" AND "+DToS(MV_PAR08)+""
-    Local cQuery5 := "UPDATE CD2100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE CD2_FILIAL BETWEEN "+MV_PAR01+" AND "+MV_PAR02+" AND CD2_DOC BETWEEN "+MV_PAR03+" AND "+MV_PAR04+" AND CD2_SERIE BETWEEN "+MV_PAR05+" AND "+MV_PAR06+" AND CD2_EMISSAO BETWEEN "+DToS(MV_PAR07)+" AND "+DToS(MV_PAR08)+""
-    Local cQuery6 := "UPDATE SE2100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE E2_FILIAL BETWEEN "+MV_PAR01+" AND "+MV_PAR02+" AND E2_NUM BETWEEN "+MV_PAR03+" AND "+MV_PAR04+" AND E2_PREFIXO BETWEEN "+MV_PAR05+" AND "+MV_PAR06+" AND E2_EMISSAO BETWEEN "+DToS(MV_PAR07)+" AND "+DToS(MV_PAR08)+""
+    Local cQuery1 
+    Local cQuery2 
+    Local cQuery3 
+    Local cQuery4 
+    Local cQuery5 
+    Local cQuery6 
 
 
     If (__CUSERID$GETNEWPAR("PR_USRRTNF","000000"))
         If ParamBox(aPergs, "Parametros",,,,,,,,,.T.,.T.)
+            cQuery1 := "UPDATE SF1100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE F1_FILIAL BETWEEN '"+MV_PAR01+"' AND '"+MV_PAR02+"' AND F1_DOC BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"' AND F1_SERIE BETWEEN '"+MV_PAR05+"' AND '"+MV_PAR06+"' AND F1_EMISSAO BETWEEN '"+DTOS(MV_PAR07)+"' AND '"+DTOS(MV_PAR08)+"'"
+            cQuery2 := "UPDATE SD1100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE F1_FILIAL BETWEEN '"+MV_PAR01+"' AND '"+MV_PAR02+"' AND F1_DOC BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"' AND F1_SERIE BETWEEN '"+MV_PAR05+"' AND '"+MV_PAR06+"' AND F1_EMISSAO BETWEEN '"+DTOS(MV_PAR07)+"' AND '"+DTOS(MV_PAR08)+"'"
+            cQuery3 := "UPDATE SFT100 SET FT_DTCANC = '', FT_OBSERV = '' WHERE FT_FILIAL BETWEEN '"+MV_PAR01+"' AND '"+MV_PAR02+"' AND FT_NFISCAL BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"' AND FT_SERIE BETWEEN '"+MV_PAR05+"' AND '"+MV_PAR06+"' AND FT_EMISSAO BETWEEN '"+DTOS(MV_PAR07)+"' AND '"+DTOS(MV_PAR08)+"'"
+            cQuery4 := "UPDATE SF3100 SET F3_DTCANC = '', F3_OBSERV = '', F3_CODRSEF = '' WHERE F3_FILIAL BETWEEN '"+MV_PAR01+"' AND '"+MV_PAR02+"' AND F3_NFISCAL BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"' AND F3_SERIE BETWEEN '"+MV_PAR05+"' AND '"+MV_PAR06+"' AND F3_EMISSAO BETWEEN '"+DTOS(MV_PAR07)+"' AND '"+DTOS(MV_PAR08)+"'"
+            cQuery5 := "UPDATE CD2100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE CD2_FILIAL BETWEEN '"+MV_PAR01+"' AND '"+MV_PAR02+"' AND CD2_DOC BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"' AND CD2_SERIE BETWEEN '"+MV_PAR05+"' AND '"+MV_PAR06+"' AND CD2_EMISSAO BETWEEN '"+DTOS(MV_PAR07)+"' AND '"+DTOS(MV_PAR08)+"'"
+            cQuery6 := "UPDATE SE2100 SET D_E_L_E_T_ = '', R_E_C_D_E_L_ = '' WHERE E2_FILIAL BETWEEN '"+MV_PAR01+"' AND '"+MV_PAR02+"' AND E2_NUM BETWEEN '"+MV_PAR03+"' AND '"+MV_PAR04+"' AND E2_PREFIXO BETWEEN '"+MV_PAR05+"' AND '"+MV_PAR06+"' AND E2_EMISSAO BETWEEN '"+DTOS(MV_PAR07)+"' AND '"+DTOS(MV_PAR08)+"'"
+
             zExecQry(cQuery1)
             zExecQry(cQuery2)
             zExecQry(cQuery3)
@@ -53,11 +60,13 @@ User Function PRTFIS99()
             zExecQry(cQuery5)
             zExecQry(cQuery6)
 
-            For cFirstDoc := MVPAR_03 to MVPAR_04
-                cBodyEmail += fMontaLog(Val(SrtTran(AllTrim(cFirstDoc))),MV_PAR05,"Registro processado com sucesso",CONVERT(VARCHAR, GETDATE(), 103))
-            Next
+            // For cFirstDoc := MVPAR_03 to MVPAR_04
+            //     cBodyEmail += fMontaLog(Val(SrtTran(AllTrim(cFirstDoc))),MV_PAR05,"Registro processado com sucesso",CONVERT(VARCHAR, GETDATE(), 103))
+            // Next
 
-            zEnviaEmail(cBodyEmail)
+            FWAlertSuccess('Sucesso no retorno da nota fiscal','Sucesso')
+
+            // zEnviaEmail(cBodyEmail)
 
         EndIf
 
